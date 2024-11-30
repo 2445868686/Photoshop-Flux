@@ -1,16 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="main.js"></script> 
-    <link rel="stylesheet" href="style.css">   
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <sp-heading>Layer Image</sp-heading>
-  <sp-body>
-    <div id="layer-image">No image available</div>
-  </sp-body>
+  <header>
+    <h1 class="header-title">填充式生成工具</h1>
+  </header>
+  <main>
+    <form id="generationForm" class="form-container">
+      <!-- Prompt 多行文本框 -->
+      <label for="prompt" class="form-label">Prompt:</label>
+      <textarea id="prompt" name="prompt" rows="5" required class="form-textarea">a man sit on the couch</textarea>
+
+      <!-- Steps 输入框 -->
+      <label for="steps" class="form-label">Steps:</label>
+      <input type="number" id="steps" name="steps" value="30" required class="form-input" />
+
+      <!-- Prompt Upsampling 开关 -->
+      <label for="promptUpsampling" class="form-label">Prompt Upsampling:</label>
+      <input type="checkbox" id="promptUpsampling" name="promptUpsampling" class="form-checkbox" />
+
+      <!-- Guidance 输入框 -->
+      <label for="guidance" class="form-label">Guidance:</label>
+      <input type="number" id="guidance" name="guidance" value="20" required class="form-input" />
+
+      <!-- Output Format 下拉框 -->
+      <label for="outputFormat" class="form-label">Output Format:</label>
+      <select id="outputFormat" name="outputFormat" class="form-input">
+        <option value="png" selected>PNG</option>
+        <option value="jpg">JPG</option>
+      </select>
+
+      <!-- Safety Tolerance 输入框 -->
+      <label for="safetyTolerance" class="form-label">Safety Tolerance:</label>
+      <input type="number" id="safetyTolerance" name="safetyTolerance" value="2" class="form-input" />
+    </form>
+  </main>
   <footer>
-    <sp-button id="btnGetLayerBase64">Get Layer Base64</sp-button>
+    <div class="button-container">
+      <sp-button id="btnGenerate">填充式生成</sp-button>
+    </div>
   </footer>
 </body>
 </html>
