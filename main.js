@@ -1,7 +1,10 @@
 const { app, core, imaging, action } = require('photoshop');
 const { storage } = require('uxp');
 const fs = storage.localFileSystem;
-
+document.addEventListener("DOMContentLoaded", () => {
+    const panel = require("uxp").window;
+    panel.moveTo(100, 100); // 将窗口移动到屏幕坐标 (100, 100)
+  });
 async function getActiveLayerBase64() {
     try {
         const activeDoc = app.activeDocument;
