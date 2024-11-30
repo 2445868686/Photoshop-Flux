@@ -1,19 +1,91 @@
 body {
-  color: white;
-  padding: 0 16px;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #333;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* 确保占满视窗高度 */
 }
 
-#layer-image {
-  border: 1px solid #808080;
-  border-radius: 4px;
-  padding: 16px;
-  margin-top: 20px;
-  text-align: center;
+.header-title {
+    text-align: center;
+    font-size: 1.5rem;
+    margin: 1rem 0;
 }
 
-#layer-image img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
+main {
+    flex: 1; /* 占据剩余空间 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 垂直居中内容 */
+    align-items: center; /* 水平居中内容 */
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    max-width: 400px;
+    gap: 1rem; /* 控制输入框间距 */
+    margin: 0 auto;
+}
+
+.form-label {
+    font-size: 1rem;
+    color: #fff;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    box-sizing: border-box;
+    height: 2.5rem;
+}
+
+.form-textarea {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    box-sizing: border-box;
+    height: 4rem;
+    resize: none;
+}
+
+.form-checkbox {
+    margin-left: 0.5rem;
+    transform: scale(1.2);
+}
+
+footer {
+    display: flex;
+    justify-content: center; /* 水平居中按钮 */
+    align-items: center; /* 垂直居中 */
+    padding: 1rem; /* 增加内边距 */
+}
+
+.button-container {
+    width: 100%;
+    text-align: center; /* 确保按钮位于容器中央 */
+}
+
+sp-button {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #0078d4;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    text-align: center;
+}
+
+sp-button:hover {
+    background-color: #005ea3;
 }
