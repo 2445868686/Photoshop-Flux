@@ -6,13 +6,17 @@ body {
     color: #fff;
     display: flex;
     flex-direction: column;
-    height: 100vh; /* 确保占满视窗高度 */
+    height: 100vh; /* 占满视窗高度 */
+}
+
+header {
+    text-align: center;
+    padding: 1rem 0; /* 增加顶部和底部间距 */
 }
 
 .header-title {
-    text-align: center;
     font-size: 1.5rem;
-    margin: 1rem 0;
+    margin: 0;
 }
 
 main {
@@ -21,20 +25,32 @@ main {
     flex-direction: column;
     justify-content: center; /* 垂直居中内容 */
     align-items: center; /* 水平居中内容 */
+    width: 90%; /* 自适应宽度 */
+    max-width: 600px; /* 设置最大宽度 */
+    min-width: 300px; /* 设置最小宽度 */
+    background-color: #444; /* 背景色 */
+    border-radius: 10px; /* 圆角 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 阴影 */
+    padding: 2rem; /* 内边距 */
+    margin: 0 auto; /* 居中 */
 }
 
 .form-container {
     display: flex;
     flex-direction: column;
-    width: 90%;
-    max-width: 400px;
+    width: 100%; /* 填满 main 的宽度 */
     gap: 1rem; /* 控制输入框间距 */
-    margin: 0 auto;
 }
 
-.form-label {
+.form-textarea {
+    width: 100%;
+    padding: 1rem; /* 增加内边距 */
     font-size: 1rem;
-    color: #fff;
+    border: none;
+    border-radius: 5px;
+    box-sizing: border-box;
+    height: 8rem; /* 高度适中 */
+    resize: none; /* 禁用调整大小功能 */
 }
 
 .form-input {
@@ -47,27 +63,9 @@ main {
     height: 2.5rem;
 }
 
-.form-textarea {
-    width: 100%;
-    padding: 0.5rem;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    box-sizing: border-box;
-    height: 4rem;
-    resize: none;
-}
-
-.form-checkbox {
-    margin-left: 0.5rem;
-    transform: scale(1.2);
-}
-
 footer {
-    display: flex;
-    justify-content: center; /* 水平居中按钮 */
-    align-items: center; /* 垂直居中 */
-    padding: 1rem; /* 增加内边距 */
+    text-align: center; /* 确保内容居中 */
+    padding: 1rem 0; /* 增加顶部和底部间距 */
 }
 
 .button-container {
@@ -85,7 +83,10 @@ sp-button {
     border: none;
     text-align: center;
 }
-
+.form-label {
+    font-size: 0.9rem; /* 设置字体大小 */
+    color: #fff;
+}
 sp-button:hover {
     background-color: #005ea3;
 }
