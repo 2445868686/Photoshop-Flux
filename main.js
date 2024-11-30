@@ -1,6 +1,7 @@
 const { app, core, imaging, action } = require('photoshop');
 const { storage } = require('uxp');
 const fs = storage.localFileSystem;
+
 async function getActiveLayerBase64() {
     try {
         const activeDoc = app.activeDocument;
@@ -64,7 +65,7 @@ async function getActiveLayerBase64() {
         // 使用完文件后立即删除
         
         try {
-            //await outputFile.delete();
+            await outputFile.delete();
             console.log(`已删除临时文件：${outputFile.nativePath}`);
         } catch (deleteError) {
             console.error("删除临时文件时发生错误：", deleteError);
@@ -95,7 +96,7 @@ async function submitFluxTask(imageBase64) {
 
   const requestBody = {
       image: imageBase64,
-      prompt: "a bird",
+      prompt: "a man sit on the couch",
       steps: 30,
       prompt_upsampling: false,  // 添加额外参数以符合官方示例
       guidance: 20,  // 你可以根据需求调整这些参数
@@ -160,44 +161,102 @@ async function getTaskResult(taskId) {
   }
 
 // 下载图片并加载到 Photoshop
-async function downloadToPhotoshop(imageUrl) {
+async function downloadToSpecifiedPath(imageUrl) {
     try {
-      // 下载图片
-      const response = await fetch(imageUrl);
-      if (!response.ok) {
-        throw new Error(`无法下载图片，状态码：${response.status}`);
-      }
-      const arrayBuffer = await response.arrayBuffer();
-      const uint8Array = new Uint8Array(arrayBuffer);
-      const blob = new Blob([uint8Array], { type: "image/png" });
-  
-      // 在 Photoshop 中打开图片
-      await core.executeAsModal(async () => {
-        const tempFolder = await fs.getTemporaryFolder();
-        const tempFile = await tempFolder.createFile("temp_image.png", { overwrite: true });
-        await tempFile.write(uint8Array, { format: storage.formats.binary });
-        await app.open(tempFile);
-      }, { commandName: "Place Generated Image" });
+        const activeDoc = app.activeDocument;
+        const activeLayer = activeDoc.activeLayers[0];
+
+        // 获取选中图层的名称并生成文件名
+        const layerName = activeLayer.name.replace(/[\\/:*?"<>|]/g, ""); // 移除非法字符
+        const fileName = `${layerName}_generate.png`;
+
+        // 目标路径
+        const downloadFolderPath = "/Users/mac-mini-03/Downloads";
+        const filePath = `${downloadFolderPath}/${fileName}`;
+
+        // 下载图片
+        const response = await fetch(imageUrl);
+        if (!response.ok) {
+            throw new Error(`无法下载图片，状态码：${response.status}`);
+        }
+
+        // 将图片数据保存到指定路径
+        const arrayBuffer = await response.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
+        const { storage } = require("uxp");
+        const fs = storage.localFileSystem;
+
+        // 获取目标文件夹并创建文件
+        const targetFolder = await fs.getFolderForSaving();
+        const outputFile = await targetFolder.createFile(fileName, { overwrite: true });
+        await outputFile.write(uint8Array, { format: storage.formats.binary });
+
+        console.log(`图片已下载并保存到指定路径：${outputFile.nativePath}`);
+        return outputFile.nativePath; // 返回图片路径
     } catch (error) {
-      console.error("下载并加载图片时发生错误:", error);
-      throw error;
+        console.error("下载并保存图片时发生错误:", error);
+        throw error;
     }
-  }
+}
+
+async function downloadToSpecifiedPath(imageUrl) {
+    try {
+        const { app, storage } = require("photoshop");
+        const fs = storage.localFileSystem;
+
+        // 获取活动文档和选中图层
+        const activeDoc = app.activeDocument;
+        const activeLayer = activeDoc.activeLayers[0];
+
+        // 生成文件名：选中图层名称 + _generate
+        const layerName = activeLayer.name.replace(/[\\/:*?"<>|]/g, ""); // 移除非法字符
+        const fileName = `${layerName}_generate.png`;
+
+        // 获取临时文件夹
+        const tempFolder = await fs.getTemporaryFolder();
+        const outputFile = await tempFolder.createFile(fileName, { overwrite: true });
+
+        // 下载图片数据
+        const response = await fetch(imageUrl);
+        if (!response.ok) {
+            throw new Error(`无法下载图片，状态码：${response.status}`);
+        }
+
+        // 写入文件
+        const arrayBuffer = await response.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
+        await outputFile.write(uint8Array, { format: storage.formats.binary });
+
+        console.log(`图片已下载并保存到指定路径：${outputFile.nativePath}`);
+        return outputFile.nativePath; // 返回图片路径
+    } catch (error) {
+        console.error("下载并保存图片时发生错误:", error);
+        throw error;
+    }
+}
+
+
 
 // 为按钮点击事件添加监听器
-document.getElementById("btnGetLayerBase64").addEventListener("click", async () => {
+document.getElementById("btnGenerate").addEventListener("click", async () => {
     try {
+        // 获取选中图层的 Base64 编码
         const layerBase64 = await getActiveLayerBase64();
-        //const taskId = await submitFluxTask(layerBase64);
+        console.log("选中图层的 Base64:", layerBase64);
+
+        // 提交任务到 Flux API
+        const taskId = await submitFluxTask(layerBase64);
         console.log("任务已提交，任务 ID:", taskId);
-    
+
+        // 等待任务完成并获取生成的图像 URL
         const imageUrl = await getTaskResult(taskId);
         console.log("任务完成，生成的图片 URL:", imageUrl);
-    
-        await downloadToPhotoshop(imageUrl);
-        console.log("图片已下载到 Photoshop");
-        } catch (error) {
+
+        // 加载下载的图片到 Photoshop 的新图层
+        await loadImageToLayerDirectly(imageUrl);
+        console.log("图片已成功加载到 Photoshop 的新图层中");
+    } catch (error) {
         console.error("发生错误:", error);
     }
-  });
+});
 
