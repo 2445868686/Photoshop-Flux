@@ -36,7 +36,7 @@
   ],
   "requiredPermissions": {
     "network": {
-      "domains": ["api.bfl.ml"]  
+      "domains": ["api.bfl.ml","bfldeliverysc.blob.core.windows.net"]  
     },
     "filesystem": {
       "read": true,
