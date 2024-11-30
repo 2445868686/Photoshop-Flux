@@ -37,6 +37,11 @@
   "requiredPermissions": {
     "network": {
       "domains": ["api.bfl.ml"]  
+    },
+    "filesystem": {
+      "read": true,
+      "write": true,
+      "launchProcess": false
     }
   }
 }
