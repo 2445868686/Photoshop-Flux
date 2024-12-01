@@ -1,92 +1,105 @@
 body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: #333;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    height: 100vh; /* 占满视窗高度 */
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #333;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* 占满视窗高度 */
 }
 
 header {
-    text-align: center;
-    padding: 1rem 0; /* 增加顶部和底部间距 */
+  text-align: center;
+  padding: 1rem 0; /* 增加顶部和底部间距 */
 }
 
 .header-title {
-    font-size: 1.5rem;
-    margin: 0;
+  font-size: 1.5rem;
+  margin: 0;
 }
 
 main {
-    flex: 1; /* 占据剩余空间 */
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* 垂直居中内容 */
-    align-items: center; /* 水平居中内容 */
-    width: 90%; /* 自适应宽度 */
-    max-width: 600px; /* 设置最大宽度 */
-    min-width: 300px; /* 设置最小宽度 */
-    background-color: #444; /* 背景色 */
-    border-radius: 10px; /* 圆角 */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 阴影 */
-    padding: 2rem; /* 内边距 */
-    margin: 0 auto; /* 居中 */
+  flex: 1; /* 占据剩余空间 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 垂直居中内容 */
+  align-items: center; /* 水平居中内容 */
+  width: 90%; /* 自适应宽度 */
+  max-width: 600px; /* 设置最大宽度 */
+  min-width: 300px; /* 设置最小宽度 */
+  background-color: #444; /* 背景色 */
+  border-radius: 10px; /* 圆角 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 阴影 */
+  padding: 1rem; /* 内边距 */
+  margin: 0 auto; /* 居中 */
+}
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 控制输入框之间的间距 */
+  margin-bottom: 10px; /* 控制每行之间的间距 */
 }
 
-.form-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%; /* 填满 main 的宽度 */
-    gap: 1rem; /* 控制输入框间距 */
+.tab-container {
+  display: flex; /* 使用弹性布局 */
+  justify-content: space-between; /* 每个 Tab 等距分布 */
+  background-color: #444; /* Tab 栏背景颜色 */
+  padding: 0; /* 移除默认间距 */
+  margin: 0; /* 确保对齐 */
+  border-bottom: 2px solid #555; /* Tab 栏底部边框 */
 }
-
+.form-input[type="number"] {
+  flex: 0 0 20%; /* 数字输入框宽度固定为30% */
+}
 .form-textarea {
-    width: 100%;
-    padding: 1rem; /* 增加内边距 */
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    box-sizing: border-box;
-    height: 8rem; /* 高度适中 */
-    resize: none; /* 禁用调整大小功能 */
+  width: 100%;
+  padding: 1rem; /* 增加内边距 */
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  box-sizing: border-box;
+  height: 8rem; /* 高度适中 */
+  resize: none; /* 禁用调整大小功能 */
 }
 
 .form-input {
-    width: 100%;
-    padding: 0.5rem;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    box-sizing: border-box;
-    height: 2.5rem;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  box-sizing: border-box;
+  height: 2.5rem;
 }
 
 footer {
-    text-align: center; /* 确保内容居中 */
-    padding: 1rem 0; /* 增加顶部和底部间距 */
+  text-align: center; /* 确保内容居中 */
+  padding: 1rem 0; /* 增加顶部和底部间距 */
 }
 
 .button-container {
-    width: 100%;
-    text-align: center; /* 确保按钮位于容器中央 */
+  width: 100%;
+  text-align: center; /* 确保按钮位于容器中央 */
 }
 
 sp-button {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #0078d4;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-    border: none;
-    text-align: center;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #0078d4;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  text-align: center;
 }
 .form-label {
-    font-size: 0.9rem; /* 设置字体大小 */
-    color: #fff;
+  font-size: 0.9rem; /* 设置字体大小 */
+  color: #fff;
+  flex: 0 0 25%; /* label 默认占 40% */
+  text-align: left; /* 文本右对齐 */
 }
 sp-button:hover {
-    background-color: #005ea3;
+  background-color: #005ea3;
 }
+
