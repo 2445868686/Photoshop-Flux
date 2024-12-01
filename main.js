@@ -6,7 +6,25 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Panel loaded");
     loadOrCreateSettings();
 });
-
+document.addEventListener("DOMContentLoaded", () => {
+    const tabs = document.querySelectorAll(".tab");
+    const tabContents = document.querySelectorAll("[data-tab-content]");
+  
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        // 移除所有 Tab 的 active 类
+        tabs.forEach(t => t.classList.remove("active"));
+        // 隐藏所有内容
+        tabContents.forEach(content => (content.style.display = "none"));
+  
+        // 激活当前 Tab
+        tab.classList.add("active");
+        const targetContent = document.querySelector(`[data-tab-content="${tab.dataset.tab}"]`);
+        targetContent.style.display = "block";
+      });
+    });
+  });
+  
 let settings = {
     apikey: "",
     prompt: "",
