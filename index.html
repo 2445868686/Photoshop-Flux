@@ -10,32 +10,30 @@
   </header>
   <main>
     <form id="generationForm" class="form-container">
+      <!-- FLUX API 密钥 输入框（密文模式） -->
+      <label for="apikey" class="form-label">API:</label>
+     <input type="password" id="apikey" name="apikey" autocomplete="off" required class="form-input" />
+
       <!-- Prompt 多行文本框 -->
       <label for="prompt" class="form-label">Prompt:</label>
-      <textarea id="prompt" name="prompt" rows="5" required class="form-textarea">a man sit on the couch</textarea>
+      <textarea id="prompt" name="prompt" required class="form-textarea"></textarea>
 
       <!-- Steps 输入框 -->
       <label for="steps" class="form-label">Steps:</label>
-      <input type="number" id="steps" name="steps" value="30" required class="form-input" />
-
-      <!-- Prompt Upsampling 开关 -->
-      <label for="promptUpsampling" class="form-label">Prompt Upsampling:</label>
-      <input type="checkbox" id="promptUpsampling" name="promptUpsampling" class="form-checkbox" />
-
+      <input type="number" id="steps" name="steps" value="" required class="form-input" />
+      
       <!-- Guidance 输入框 -->
       <label for="guidance" class="form-label">Guidance:</label>
-      <input type="number" id="guidance" name="guidance" value="20" required class="form-input" />
-
-      <!-- Output Format 下拉框 -->
-      <label for="outputFormat" class="form-label">Output Format:</label>
-      <select id="outputFormat" name="outputFormat" class="form-input">
-        <option value="png" selected>PNG</option>
-        <option value="jpg">JPG</option>
-      </select>
+      <input type="number" id="guidance" name="guidance" value="" required class="form-input" />
 
       <!-- Safety Tolerance 输入框 -->
       <label for="safetyTolerance" class="form-label">Safety Tolerance:</label>
-      <input type="number" id="safetyTolerance" name="safetyTolerance" value="2" class="form-input" />
+      <input type="number" id="safetyTolerance" name="safetyTolerance" value="" class="form-input" />
+      
+       <!-- Prompt Upsampling 开关 -->
+       <label for="promptUpsampling" class="form-label">Prompt Upsampling:</label>
+       <input type="checkbox" id="promptUpsampling" name="promptUpsampling" class="form-checkbox" />
+ 
     </form>
   </main>
   <footer>
@@ -43,5 +41,10 @@
       <sp-button id="btnGenerate">填充式生成</sp-button>
     </div>
   </footer>
+  <!-- 进度容器 -->
+  <div id="progressContainer" style="display:none;">
+  <h2>处理中...</h2>
+  <p id="progressMessage">初始化...</p>
+</div>
 </body>
 </html>
