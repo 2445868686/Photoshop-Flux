@@ -9,32 +9,33 @@
     <h1 class="header-title">填充式生成工具</h1>
   </header>
   <main>
-    <form id="generationForm" class="form-container">
-      <!-- FLUX API 密钥 输入框（密文模式） -->
-      <label for="apikey" class="form-label">API:</label>
-     <input type="password" id="apikey" name="apikey" autocomplete="off" required class="form-input" />
+        <!-- Tab 栏 -->
+    <nav class="tab-container">
+      <button class="tab active" data-tab="tab1">填充</button>
+      <button class="tab" data-tab="tab2">配置</button>
+    </nav>
+    <form id="generationForm" class="form-container" data-tab-content="tab1">
+      <label for="prompt" class="form-label">提示词:</label>
+      <textarea id="prompt" name="提示词" required class="form-textarea"></textarea>
 
-      <!-- Prompt 多行文本框 -->
-      <label for="prompt" class="form-label">Prompt:</label>
-      <textarea id="prompt" name="prompt" required class="form-textarea"></textarea>
+      <div class="form-row">
+          <label for="steps" class="form-label">步数:</label>
+          <input type="number" id="steps" name="步数" value="" step="1" min="15" max="50" required class="form-input" />
+          <label for="guidance" class="form-label">指导度:</label>
+          <input type="number" id="guidance" name="指导度" value="" step="" min="1.5" max="100" required class="form-input" />
+      </div>
 
-      <!-- Steps 输入框 -->
-      <label for="steps" class="form-label">Steps:</label>
-      <input type="number" id="steps" name="steps" value="" required class="form-input" />
-      
-      <!-- Guidance 输入框 -->
-      <label for="guidance" class="form-label">Guidance:</label>
-      <input type="number" id="guidance" name="guidance" value="" required class="form-input" />
-
-      <!-- Safety Tolerance 输入框 -->
-      <label for="safetyTolerance" class="form-label">Safety Tolerance:</label>
-      <input type="number" id="safetyTolerance" name="safetyTolerance" value="" class="form-input" />
-      
-       <!-- Prompt Upsampling 开关 -->
-       <label for="promptUpsampling" class="form-label">Prompt Upsampling:</label>
-       <input type="checkbox" id="promptUpsampling" name="promptUpsampling" class="form-checkbox" />
- 
+      <div class="form-row">
+          <label for="safetyTolerance" class="form-label">安全容限:</label>
+          <input type="number" id="safetyTolerance" name="安全容限" value="" step="1" min="0" max="6" class="form-input" />
+          <label for="promptUpsampling" class="form-label">提示超采样:</label>
+          <input type="checkbox" id="promptUpsampling" name="提示超采样" class="form-checkbox" />
+      </div>
     </form>
+    <div class="form-container" data-tab-content="tab2" style="display: none;">
+      <label for="apikey" class="form-label">API 密钥:</label>
+      <input type="password" id="apikey" name="apikey" autocomplete="off" required class="form-input" />
+    </div>
   </main>
   <footer>
     <div class="button-container">
@@ -45,6 +46,6 @@
   <div id="progressContainer" style="display:none;">
   <h2>处理中...</h2>
   <p id="progressMessage">初始化...</p>
-</div>
+  </div>
 </body>
 </html>
