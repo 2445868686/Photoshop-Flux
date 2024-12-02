@@ -1,51 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
-    <script src="main.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>填充式生成工具</title>
     <link rel="stylesheet" href="style.css">
+    <script src="main.js"></script>
 </head>
 <body>
   <header>
-    <h1 class="header-title">填充式生成工具</h1>
+    <h1 class="header-title">Flux工具</h1>
   </header>
-  <main>
-        <!-- Tab 栏 -->
-    <nav class="tab-container">
-      <button class="tab active" data-tab="tab1">填充</button>
-      <button class="tab" data-tab="tab2">配置</button>
-    </nav>
-    <form id="generationForm" class="form-container" data-tab-content="tab1">
-      <label for="prompt" class="form-label">提示词:</label>
-      <textarea id="prompt" name="提示词" required class="form-textarea"></textarea>
+<div class="tabs">
+    <div class="tab active" data-tab="fill">填充</div>
+    <div class="tab" data-tab="config">配置</div>
+</div>
 
-      <div class="form-row">
-          <label for="steps" class="form-label">步数:</label>
-          <input type="number" id="steps" name="步数" value="" step="1" min="15" max="50" required class="form-input" />
-          <label for="guidance" class="form-label">指导度:</label>
-          <input type="number" id="guidance" name="指导度" value="" step="" min="1.5" max="100" required class="form-input" />
-      </div>
+<main>
+    <div class="tab-content" data-tab-content="fill" style="display: block;">
+        <form id="generationForm" class="form-container">
 
-      <div class="form-row">
-          <label for="safetyTolerance" class="form-label">安全容限:</label>
-          <input type="number" id="safetyTolerance" name="安全容限" value="" step="1" min="0" max="6" class="form-input" />
-          <label for="promptUpsampling" class="form-label">提示超采样:</label>
-          <input type="checkbox" id="promptUpsampling" name="提示超采样" class="form-checkbox" />
-      </div>
-    </form>
-    <div class="form-container" data-tab-content="tab2" style="display: none;">
-      <label for="apikey" class="form-label">API 密钥:</label>
-      <input type="password" id="apikey" name="apikey" autocomplete="off" required class="form-input" />
+            <div class="form-row-prompt">
+                <label for="prompt" class="form-label">提示词：</label>
+                <textarea id="prompt" name="prompt" required class="form-textarea"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-row-half">
+                    <label for="steps" class="form-label">步数：</label>
+                    <input type="number" id="steps" name="steps" value="" step="1" min="15" max="50" required class="form-input" />
+                </div>
+                <div class="form-row-half">
+                    <label for="guidance" class="form-label">指导度：</label>
+                    <input type="number" id="guidance" name="guidance" value="" step="" min="1.5" max="100" required class="form-input" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-row-half">
+                    <label for="safetyTolerance" class="form-label">安全度：</label>
+                    <input type="number" id="safetyTolerance" name="safetyTolerance" value="" step="1" min="0" max="6" class="form-input" />
+                </div>
+                <div class="form-row-half">
+                    <label for="promptUpsampling" class="form-label">提示超采：</label>
+                    <input type="checkbox" id="promptUpsampling" name="promptUpsampling" class="form-checkbox" />
+                </div>
+            </div>
+        </form>
+        <div id="log" class="log" style="display:none;">
+          <p id="logMessage">初始化...</p>
+        </div>
+        <div class="button-container">
+            <button id="btnGenerate" class="generate-button">生成</button>
+        </div>
     </div>
-  </main>
-  <footer>
-    <div class="button-container">
-      <sp-button id="btnGenerate">填充式生成</sp-button>
+    <div class="tab-content" data-tab-content="config" style="display: none;">
+        <form id="config-form" class="form-container">
+            <div class="form-row form-row-full">
+                <label for="apikey" class="form-label">API 密钥：</label>
+                <input type="password" id="apikey" name="apikey" autocomplete="off" required class="form-input" />
+            </div>
+        </form>
     </div>
-  </footer>
-  <!-- 进度容器 -->
-  <div id="progressContainer" style="display:none;">
-  <h2>处理中...</h2>
-  <p id="progressMessage">初始化...</p>
-  </div>
+</main>
+<footer>
+  <p class="copyright">
+    © 2024 <a href="https://www.baidu.com" target="_blank" class="external-link" id="hbLink">HB</a>. All Rights Reserved.
+  </p>
+</footer>
 </body>
 </html>
