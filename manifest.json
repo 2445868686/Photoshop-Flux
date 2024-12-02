@@ -15,10 +15,10 @@
     {
       "type": "panel",
       "id": "fluxPanel",
-      "minimumSize": { "width": 230, "height": 200 },
-      "maximumSize": { "width": 400, "height": 600 },
-      "preferredDockedSize": { "width": 350, "height": 550 },
-      "preferredFloatingSize": { "width": 350, "height": 550 },
+      "minimumSize": { "width": 300, "height": 625 },
+      "maximumSize": { "width": 450, "height": 800 },
+      "preferredDockedSize": { "width": 330, "height": 800 },
+      "preferredFloatingSize": { "width": 330, "height": 625 },
       "icons": [
         { "width": 32, "height": 32, "path": "icons/icon_D.png", "scale": [1, 2], "theme": ["dark", "darkest"], "species": ["generic"] },
         { "width": 32, "height": 32, "path": "icons/icon_N.png", "scale": [1, 2], "theme": ["lightest", "light"], "species": ["generic"] }
@@ -41,7 +41,10 @@
     "filesystem": {
       "read": true,
       "write": true,
-      "launchProcess": false
+      "launchProcess": true
+    },
+    "launchProcess": {
+      "schemes": ["https"]
     }
   }
 }
