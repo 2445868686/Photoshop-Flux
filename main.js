@@ -12,12 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
   
     tabs.forEach(tab => {
       tab.addEventListener("click", () => {
-        // 移除所有 Tab 的 active 类
         tabs.forEach(t => t.classList.remove("active"));
-        // 隐藏所有内容
         tabContents.forEach(content => (content.style.display = "none"));
-  
-        // 激活当前 Tab
         tab.classList.add("active");
         const targetContent = document.querySelector(`[data-tab-content="${tab.dataset.tab}"]`);
         targetContent.style.display = "block";
@@ -153,10 +149,9 @@ async function getActiveLayerBase64() {
                 ],
                 { "synchronousExecution": true }
             );
-            console.log("batchPlay result:", result); // 调试信息
+            console.log("batchPlay result:", result); 
         }, { commandName: "Export Layer" });
 
-        // 添加调试信息
         console.log("outputFile:", outputFile);
 
         // 读取生成的文件并获取 ArrayBuffer
@@ -164,10 +159,8 @@ async function getActiveLayerBase64() {
 
         // 将 ArrayBuffer 转换为 Base64
         const base64String = arrayBufferToBase64(arrayBuffer);
-        
-        console.log("base64String：", base64String);
+
         // 使用完文件后立即删除
-        
         try {
             await outputFile.delete();
             console.log(`已删除临时文件：${outputFile.nativePath}`);
@@ -317,42 +310,42 @@ async function loadImageToLayerDirectly(imageUrl) {
 
 // 为按钮点击事件添加监听器
 document.getElementById("btnGenerate").addEventListener("click", async () => {
-    saveSettings()
-    // 显示进度容器
-    const progressContainer = document.getElementById("progressContainer");
-    const progressMessage = document.getElementById("progressMessage");
-    progressContainer.style.display = "block";
-
-    // 禁用生成按钮以防止多次点击
+    saveSettings();
+    // 获取 log 框和相关元素
+    const logElement = document.getElementById("log");
+    const logMessage = document.getElementById("logMessage");
     const generateButton = document.getElementById("btnGenerate");
+
+    // 显示 log 框并禁用生成按钮，防止多次点击
+    logElement.style.display = "block";
+    logMessage.textContent = "初始化...";
     generateButton.disabled = true;
 
     try {
-        // 获取表单中的用户输入值
-        const apikey = document.getElementById("apikey").value; // 获取 apikey 的值
-        const prompt = document.getElementById("prompt").value; // 获取 Prompt 的值
-        const steps = parseInt(document.getElementById("steps").value, 10); // 获取 Steps 的值并转换为整数
-        const promptUpsampling = document.getElementById("promptUpsampling").checked; // 获取 Prompt Upsampling 的开关状态
-        const guidance = parseFloat(document.getElementById("guidance").value); // 获取 Guidance 的值并转换为浮点数
-        //const outputFormat = document.getElementById("outputFormat").value; // 获取 Output Format 的值
-        const safetyTolerance = parseInt(document.getElementById("safetyTolerance").value, 10); // 获取 Safety Tolerance 的值并转换为整数
+        // 获取用户输入的表单参数
+        const apikey = document.getElementById("apikey").value;
+        const prompt = document.getElementById("prompt").value;
+        const steps = parseInt(document.getElementById("steps").value, 10);
+        const promptUpsampling = document.getElementById("promptUpsampling").checked;
+        const guidance = parseFloat(document.getElementById("guidance").value);
+        const safetyTolerance = parseInt(document.getElementById("safetyTolerance").value, 10);
 
+        // 记录用户输入
+        logMessage.textContent = "用户输入的参数已接收...";
         console.log("用户输入的参数：", {
             apikey,
             prompt,
             steps,
             promptUpsampling,
             guidance,
-            //outputFormat,
-            safetyTolerance
+            safetyTolerance,
         });
-
 
         // 获取选中图层的 Base64 编码
         const layerBase64 = await getActiveLayerBase64();
         console.log("选中图层的 Base64:", layerBase64);
 
-        progressMessage.textContent = "正在提交任务到 Flux API...";
+        logMessage.textContent = "正在提交任务到 Flux API...";
         // 提交任务到 Flux API，使用表单中的参数
         const taskId = await submitFluxTask(layerBase64, {
             apikey,
@@ -360,36 +353,33 @@ document.getElementById("btnGenerate").addEventListener("click", async () => {
             steps,
             promptUpsampling,
             guidance,
-            //outputFormat,
-            safetyTolerance
+            safetyTolerance,
         });
         console.log("任务已提交，任务 ID:", taskId);
 
-        progressMessage.textContent = `任务已提交，任务 ID: ${taskId}`;
+        logMessage.textContent = `任务已提交，任务 ID: ${taskId}`;
 
         // 等待任务完成并获取生成的图像 URL
-        progressMessage.textContent = "等待任务完成...";
+        logMessage.textContent = "等待任务完成...";
         const imageUrl = await getTaskResult(apikey, taskId, (statusMessage) => {
-            progressMessage.textContent = statusMessage;
+            logMessage.textContent = statusMessage;
         });
         console.log("任务完成，生成的图片 URL:", imageUrl);
 
-        progressMessage.textContent = "正在将图片加载到 Photoshop...";
-        // 加载下载的图片到 Photoshop 的新图层
+        logMessage.textContent = "正在将图片加载到 Photoshop...";
+        // 加载生成的图片到 Photoshop 的新图层
         await loadImageToLayerDirectly(imageUrl);
         console.log("图片已成功加载到 Photoshop 的新图层中");
 
-        progressMessage.textContent = "处理完成！图片已加载到 Photoshop。";
+        logMessage.textContent = "处理完成！图片已加载到 Photoshop。";
 
-        // 重新启用生成按钮
+        // 恢复生成按钮状态
         generateButton.disabled = false;
-
     } catch (error) {
         console.error("发生错误:", error);
-        progressMessage.textContent = `发生错误: ${error.message}`;
+        logMessage.textContent = `发生错误: ${error.message}`;
 
-        // 重新启用生成按钮
+        // 恢复生成按钮状态
         generateButton.disabled = false;
     }
 });
-
