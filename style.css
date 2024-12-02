@@ -1,17 +1,22 @@
-body {
+/* Resetting default styles */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   font-family: Arial, sans-serif;
   background-color: #333;
   color: #fff;
   display: flex;
   flex-direction: column;
-  height: 100vh; /* 占满视窗高度 */
+  height: 100vh;
 }
 
 header {
   text-align: center;
-  padding: 1rem 0; /* 增加顶部和底部间距 */
+  padding: 1rem 0;
 }
 
 .header-title {
@@ -19,87 +24,170 @@ header {
   margin: 0;
 }
 
-main {
-  flex: 1; /* 占据剩余空间 */
+.tabs {
   display: flex;
-  flex-direction: column;
-  justify-content: center; /* 垂直居中内容 */
-  align-items: center; /* 水平居中内容 */
-  width: 90%; /* 自适应宽度 */
-  max-width: 600px; /* 设置最大宽度 */
-  min-width: 300px; /* 设置最小宽度 */
-  background-color: #444; /* 背景色 */
-  border-radius: 10px; /* 圆角 */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 阴影 */
-  padding: 1rem; /* 内边距 */
-  margin: 0 auto; /* 居中 */
+  justify-content: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ffffff;
 }
+
+.tab {
+  padding: 10px 15px;
+  flex: 1;
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+  color: #ffffff;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.tab.active {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #007bff;
+}
+
+.tab-content {
+  display: none;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+form {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 .form-row {
   display: flex;
-  align-items: center;
-  gap: 10px; /* 控制输入框之间的间距 */
-  margin-bottom: 10px; /* 控制每行之间的间距 */
+  justify-content: space-between;
+  margin-bottom: 15px;
 }
 
-.tab-container {
-  display: flex; /* 使用弹性布局 */
-  justify-content: space-between; /* 每个 Tab 等距分布 */
-  background-color: #444; /* Tab 栏背景颜色 */
-  padding: 0; /* 移除默认间距 */
-  margin: 0; /* 确保对齐 */
-  border-bottom: 2px solid #555; /* Tab 栏底部边框 */
+.form-row-full {
+  width: 100%;
 }
-.form-input[type="number"] {
-  flex: 0 0 20%; /* 数字输入框宽度固定为30% */
+
+.form-row-half {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
+
+.form-row-half .form-label {
+  text-align: left;
+  flex: 1;
+  margin-right: 0px;
+}
+
+.form-row-half .form-input {
+  text-align: left;
+  flex: 1;
+  max-width: 60%;
+}
+
+.form-label {
+  color: #fff;
+  font-size: 1rem;
+  width: 35%;
+  text-align: left;
+}
+
+.form-input,
 .form-textarea {
   width: 100%;
-  padding: 1rem; /* 增加内边距 */
+  padding: 8px;
   font-size: 1rem;
+  background-color: #444;
+  color: #fff;
   border: none;
-  border-radius: 5px;
-  box-sizing: border-box;
-  height: 8rem; /* 高度适中 */
-  resize: none; /* 禁用调整大小功能 */
+  border-radius: 3px;
 }
 
-.form-input {
-  width: 100%;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
-  box-sizing: border-box;
-  height: 2.5rem;
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
 }
 
-footer {
-  text-align: center; /* 确保内容居中 */
-  padding: 1rem 0; /* 增加顶部和底部间距 */
+.form-textarea {
+  height: 120px;
+  resize: none;
+}
+
+.form-checkbox {
+  margin-left: 10px;
+  transform: scale(1.2);
 }
 
 .button-container {
   width: 100%;
-  text-align: center; /* 确保按钮位于容器中央 */
+  padding: 10px;
 }
 
-sp-button {
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #0078d4;
+button.generate-button {
+  width: 100%;
+  padding: 10px 0;
+  background-color: #28a745;
   color: #fff;
-  border-radius: 5px;
-  cursor: pointer;
   border: none;
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+}
+
+button.generate-button:hover {
+  background-color: #218838;
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 0.9rem;
+  color: #aaa;
+  background-color: #333;
+  border-top: 1px solid #444;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+footer p {
+  margin: 0;
   text-align: center;
 }
-.form-label {
-  font-size: 0.9rem; /* 设置字体大小 */
-  color: #fff;
-  flex: 0 0 25%; /* label 默认占 40% */
-  text-align: left; /* 文本右对齐 */
-}
-sp-button:hover {
-  background-color: #005ea3;
+
+.external-link {
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
+.external-link:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.log {
+  justify-content: center;
+  color: #fff;
+  font-size: 0.8rem;
+  text-align: center;
+}
