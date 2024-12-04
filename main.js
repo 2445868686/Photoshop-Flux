@@ -1,5 +1,6 @@
 const { app, core, imaging, action } = require('photoshop');
 const { storage } = require('uxp');
+const batchPlay = action.batchPlay;
 const fs = storage.localFileSystem;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -29,6 +30,92 @@ let settings = {
     safetyTolerance: 2,
     promptUpsampling: false,
 };
+// 获取当前选区坐标
+async function getSelectionCoordinates() {
+    try {
+        const selectionInfo = await batchPlay(
+            [
+                {
+                    _obj: "get",
+                    _target: [
+                        { _property: "selection" },
+                        { _ref: "document", _enum: "ordinal", _value: "targetEnum" }
+                    ]
+                }
+            ],
+            { synchronousExecution: true }
+        );
+
+        const selection = selectionInfo[0].selection;
+        if (!selection) {
+            console.error("当前没有选区！");
+            return null;
+        }
+
+        if (selection._obj === "rectangle") {
+            // 矩形选区
+            const coordinates = {
+                top: selection.top._value,
+                left: selection.left._value,
+                bottom: selection.bottom._value,
+                right: selection.right._value,
+            };
+            console.log("矩形选区坐标:", coordinates);
+            return coordinates;
+        } else if (selection._obj === "polygon") {
+            // 多边形选区
+            const horizontal = selection.points.horizontal.list.map(pt => pt._value);
+            const vertical = selection.points.vertical.list.map(pt => pt._value);
+            console.log("多边形选区坐标:");
+            console.log("Horizontal:", horizontal);
+            console.log("Vertical:", vertical);
+            return { horizontal, vertical };
+        } else {
+            console.error("选区类型暂不支持:", selection._obj);
+            return null;
+        }
+    } catch (error) {
+        console.error("获取选区坐标时出错:", error);
+        return null;
+    }
+}
+
+// 创建图层蒙版并应用选区
+async function createLayerMask() {
+    try {
+        await batchPlay(
+            [
+                {
+                    _obj: "make",
+                    at: { _enum: "channel", _ref: "channel", _value: "mask" },
+                    new: { _class: "channel" },
+                    using: { _enum: "userMaskEnabled", _value: "revealSelection" }
+                }
+            ],
+            { synchronousExecution: true }
+        );
+        console.log("成功创建图层蒙版并应用选区！");
+    } catch (error) {
+        console.error("创建图层蒙版时出错:", error);
+    }
+}
+
+// 反转蒙版内容
+async function invertLayerMask() {
+    try {
+        await batchPlay(
+            [
+                {
+                    _obj: "invert"
+                }
+            ],
+            { synchronousExecution: true }
+        );
+        console.log("成功反转蒙版内容！");
+    } catch (error) {
+        console.error("反转蒙版内容时出错:", error);
+    }
+}
 
 async function loadOrCreateSettings() {
     try {
@@ -120,7 +207,7 @@ async function getActiveLayerBase64() {
 
         // 使用 batchPlay 导出图层
         await core.executeAsModal(async () => {
-            const result = await action.batchPlay(
+            const result = await batchPlay(
                 [
                     {
                         "_obj": "save",
@@ -282,7 +369,7 @@ async function loadImageToLayerDirectly(imageUrl) {
 
         // 使用 batchPlay 将图片加载到新图层
         await core.executeAsModal(async () => {
-            await action.batchPlay(
+            await batchPlay(
                 [
                     {
                         _obj: "placeEvent",
@@ -340,7 +427,20 @@ document.getElementById("btnGenerate").addEventListener("click", async () => {
             guidance,
             safetyTolerance,
         });
-
+        // 获取选区坐标
+        const selectionCoordinates = await getSelectionCoordinates();
+        if (!selectionCoordinates) {
+            console.error("未能获取选区坐标，操作终止！");
+            logMessage.textContent = "未能获取选区坐标，操作终止！";
+                // 恢复生成按钮状态
+            generateButton.disabled = false;
+            return;
+        }
+        // 创建蒙版并应用选区
+        await core.executeAsModal(async () => {
+            await createLayerMask();
+            await invertLayerMask();
+        }, { commandName: "Apply Selection as Mask and Invert" });
         // 获取选中图层的 Base64 编码
         const layerBase64 = await getActiveLayerBase64();
         console.log("选中图层的 Base64:", layerBase64);
