@@ -2,7 +2,7 @@
   "id": "com.adobe.example.flux-tool",
   "name": "Flux Tool",
   "version": "1.0.0",
-  "main": "index.html",  
+  "main": "index.html",
   "host": {
     "app": "PS",
     "minVersion": "22.0.0",
@@ -35,9 +35,15 @@
     }
   ],
   "requiredPermissions": {
-    "network": {
-      "domains": ["api.bfl.ml","bfldeliverysc.blob.core.windows.net"]  
-    },
+       "network": {
+         "domains": [
+           "api.bfl.ml",
+           "api.us1.bfl.ai",
+           "delivery-eu1.bfl.ai",
+           "delivery-us1.bfl.ai",      
+           "delivery-*.bfl.ai"         
+         ]
+       },
     "filesystem": {
       "read": true,
       "write": true,
