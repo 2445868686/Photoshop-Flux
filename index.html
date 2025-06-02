@@ -13,6 +13,7 @@
   </header>
 <div class="tabs">
     <div class="tab active" data-tab="fill">填充</div>
+    <div class="tab" data-tab="edit">图像编辑</div>
     <div class="tab" data-tab="config">配置</div>
 </div>
 
@@ -50,9 +51,54 @@
           <p id="logMessage">初始化...</p>
         </div>
         <div class="button-container">
-            <button id="btnGenerate" class="generate-button">生成</button>
+            <button id="btnGenerate" class="generate-button">生成 (填充)</button>
         </div>
     </div>
+
+    <div class="tab-content" data-tab-content="edit" style="display: none;">
+        <form id="editForm" class="form-container">
+            <div class="form-row-prompt">
+                <label for="kontextPrompt" class="form-label">提示词：</label>
+                <textarea id="kontextPrompt" name="kontextPrompt" required class="form-textarea"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-row-full">
+                    <label for="kontextModel" class="form-label">模型选择：</label>
+                    <select id="kontextModel" name="kontextModel" class="form-input">
+                        <option value="pro">Flux Kontext Pro</option>
+                        <option value="max">Flux Kontext Max</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-row-half">
+                    <label for="kontextSeed" class="form-label">种子 (选填)：</label>
+                    <input type="number" id="kontextSeed" name="kontextSeed" class="form-input" placeholder="例如: 42" />
+                </div>
+                <div class="form-row-half">
+                    <label for="kontextAspectRatio" class="form-label">宽高比 (选填)：</label>
+                    <input type="text" id="kontextAspectRatio" name="kontextAspectRatio" class="form-input" placeholder="例如: 16:9, 1:1" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-row-half">
+                    <label for="kontextSafetyTolerance" class="form-label">安全度：</label>
+                    <input type="number" id="kontextSafetyTolerance" name="kontextSafetyTolerance" value="2" step="1" min="0" max="6" class="form-input" />
+                </div>
+                <div class="form-row-half">
+                    <label for="kontextPromptUpsampling" class="form-label">提示超采：</label>
+                    <input type="checkbox" id="kontextPromptUpsampling" name="kontextPromptUpsampling" class="form-checkbox" />
+                </div>
+            </div>
+        </form>
+        <div id="logKontext" class="log" style="display:none;">
+          <p id="logMessageKontext">初始化...</p>
+        </div>
+        <div class="button-container">
+            <button id="btnGenerateKontext" class="generate-button">生成 (编辑)</button>
+        </div>
+    </div>
+
     <div class="tab-content" data-tab-content="config" style="display: none;">
         <form id="config-form" class="form-container">
             <div class="form-row form-row-full">
@@ -64,7 +110,7 @@
 </main>
 <footer>
   <p class="copyright">
-    © 2024 <a href="https://www.baidu.com" target="_blank" class="external-link" id="hbLink">HB</a>. All Rights Reserved.
+    © 2024 <a href="[https://www.baidu.com](https://www.baidu.com)" target="_blank" class="external-link" id="hbLink">HB</a>. All Rights Reserved.
   </p>
 </footer>
 </body>
