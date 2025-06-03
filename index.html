@@ -8,19 +8,20 @@
     <script src="main.js"></script>
 </head>
 <body>
-  <header>
+<header>
     <h1 class="header-title">Flux工具</h1>
-  </header>
+</header>
+
 <div class="tabs">
     <div class="tab active" data-tab="fill">填充</div>
-    <div class="tab" data-tab="edit">图像编辑</div>
+    <div class="tab" data-tab="edit">编辑</div>
     <div class="tab" data-tab="config">配置</div>
 </div>
 
 <main>
-    <div class="tab-content" data-tab-content="fill" style="display: block;">
+    <!-- =============== 填充 TAB =============== -->
+    <div class="tab-content" data-tab-content="fill" style="display:block;">
         <form id="generationForm" class="form-container">
-
             <div class="form-row-prompt">
                 <label for="prompt" class="form-label">提示词：</label>
                 <textarea id="prompt" name="prompt" required class="form-textarea"></textarea>
@@ -29,38 +30,52 @@
             <div class="form-row">
                 <div class="form-row-half">
                     <label for="steps" class="form-label">步数：</label>
-                    <input type="number" id="steps" name="steps" value="" step="1" min="15" max="50" required class="form-input" />
+                    <input type="number" id="steps" name="steps" value="" step="1" min="15" max="50" required class="form-input"/>
                 </div>
                 <div class="form-row-half">
                     <label for="guidance" class="form-label">指导度：</label>
-                    <input type="number" id="guidance" name="guidance" value="" step="" min="1.5" max="100" required class="form-input" />
+                    <input type="number" id="guidance" name="guidance" value="" step="" min="1.5" max="100" required class="form-input"/>
                 </div>
             </div>
+
             <div class="form-row">
                 <div class="form-row-half">
                     <label for="safetyTolerance" class="form-label">安全度：</label>
-                    <input type="number" id="safetyTolerance" name="safetyTolerance" value="" step="1" min="0" max="6" class="form-input" />
+                    <input type="number" id="safetyTolerance" name="safetyTolerance" value="" step="1" min="0" max="6" class="form-input"/>
                 </div>
                 <div class="form-row-half">
                     <label for="promptUpsampling" class="form-label">提示超采：</label>
-                    <input type="checkbox" id="promptUpsampling" name="promptUpsampling" class="form-checkbox" />
+                    <input type="checkbox" id="promptUpsampling" name="promptUpsampling" class="form-checkbox"/>
                 </div>
             </div>
         </form>
-        <div id="log" class="log" style="display:none;">
-          <p id="logMessage">初始化...</p>
-        </div>
+
+        <div id="log" class="log" style="display:none;"><p id="logMessage">初始化...</p></div>
+
         <div class="button-container">
             <button id="btnGenerate" class="generate-button">生成 (填充)</button>
         </div>
     </div>
 
-    <div class="tab-content" data-tab-content="edit" style="display: none;">
+    <!-- =============== 图像编辑 TAB =============== -->
+    <div class="tab-content" data-tab-content="edit" style="display:none;">
+        <!-- 预设按钮模块 -->
+        <div class="preset-container">
+            <!-- 新增：预设按钮标识 -->
+            <div class="form-label">预设按钮</div>
+            <div class="button-container horizontal">
+                <button id="btnPresetRestore" class="preset-button">修复老照片</button>
+                <button id="btnPresetRemoveText" class="preset-button">去除文字</button>
+                <button id="btnPresetGhibli" class="preset-button">吉卜力风格</button>
+            </div>
+        </div>
+
         <form id="editForm" class="form-container">
             <div class="form-row-prompt">
                 <label for="kontextPrompt" class="form-label">提示词：</label>
                 <textarea id="kontextPrompt" name="kontextPrompt" required class="form-textarea"></textarea>
             </div>
+
             <div class="form-row">
                 <div class="form-row-full">
                     <label for="kontextModel" class="form-label">模型选择：</label>
@@ -70,48 +85,52 @@
                     </select>
                 </div>
             </div>
+
             <div class="form-row">
                 <div class="form-row-half">
                     <label for="kontextSeed" class="form-label">种子 (选填)：</label>
-                    <input type="number" id="kontextSeed" name="kontextSeed" class="form-input" placeholder="例如: 42" />
+                    <input type="number" id="kontextSeed" name="kontextSeed" class="form-input" placeholder="例如: 42"/>
                 </div>
                 <div class="form-row-half">
                     <label for="kontextAspectRatio" class="form-label">宽高比 (选填)：</label>
-                    <input type="text" id="kontextAspectRatio" name="kontextAspectRatio" class="form-input" placeholder="例如: 16:9, 1:1" />
+                    <input type="text" id="kontextAspectRatio" name="kontextAspectRatio" class="form-input" placeholder="例如: 16:9, 1:1"/>
                 </div>
             </div>
+
             <div class="form-row">
                 <div class="form-row-half">
                     <label for="kontextSafetyTolerance" class="form-label">安全度：</label>
-                    <input type="number" id="kontextSafetyTolerance" name="kontextSafetyTolerance" value="2" step="1" min="0" max="6" class="form-input" />
+                    <input type="number" id="kontextSafetyTolerance" name="kontextSafetyTolerance" value="2" step="1" min="0" max="6" class="form-input"/>
                 </div>
                 <div class="form-row-half">
                     <label for="kontextPromptUpsampling" class="form-label">提示超采：</label>
-                    <input type="checkbox" id="kontextPromptUpsampling" name="kontextPromptUpsampling" class="form-checkbox" />
+                    <input type="checkbox" id="kontextPromptUpsampling" name="kontextPromptUpsampling" class="form-checkbox"/>
                 </div>
             </div>
         </form>
-        <div id="logKontext" class="log" style="display:none;">
-          <p id="logMessageKontext">初始化...</p>
-        </div>
+
+        <div id="logKontext" class="log" style="display:none;"><p id="logMessageKontext">初始化...</p></div>
+
         <div class="button-container">
             <button id="btnGenerateKontext" class="generate-button">生成 (编辑)</button>
         </div>
     </div>
 
-    <div class="tab-content" data-tab-content="config" style="display: none;">
+    <!-- =============== 配置 TAB =============== -->
+    <div class="tab-content" data-tab-content="config" style="display:none;">
         <form id="config-form" class="form-container">
             <div class="form-row form-row-full">
                 <label for="apikey" class="form-label">API 密钥：</label>
-                <input type="password" id="apikey" name="apikey" autocomplete="off" required class="form-input" />
+                <input type="password" id="apikey" name="apikey" autocomplete="off" required class="form-input"/>
             </div>
         </form>
     </div>
 </main>
+
 <footer>
-  <p class="copyright">
-    © 2024 <a href="[https://www.baidu.com](https://www.baidu.com)" target="_blank" class="external-link" id="hbLink">HB</a>. All Rights Reserved.
-  </p>
+    <p class="copyright">
+        © 2024 <a href="https://www.baidu.com" target="_blank" class="external-link" id="hbLink">HB</a>. All Rights Reserved.
+    </p>
 </footer>
 </body>
 </html>
