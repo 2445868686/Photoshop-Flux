@@ -191,3 +191,33 @@ footer p {
   font-size: 0.8rem;
   text-align: center;
 }
+
+/* ---------- ① 原有内容保持不变，以下仅在末尾追加 ---------- */
+
+/* 预设按钮模块整体 */
+.preset-container {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+/* 让按钮横向排列并占满整行 */
+.button-container.horizontal {
+  display: flex;
+  gap: 10px;
+}
+
+/* 预设按钮样式 */
+button.preset-button {
+  flex: 1;
+  padding: 10px 0;
+  background-color: #0066cc;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+button.preset-button:hover {
+  background-color: #0050a8;
+}
