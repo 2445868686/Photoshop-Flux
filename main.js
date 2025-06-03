@@ -3,46 +3,50 @@ const { storage } = require('uxp');
 const batchPlay = action.batchPlay;
 const fs = storage.localFileSystem;
 
-// API Endpoint mapping for Kontext models
+// ----------------------- API 地址 -----------------------
 const KONTEXT_API_ENDPOINTS = {
-    "pro": "https://api.us1.bfl.ai/v1/flux-kontext-pro",
-    "max": "https://api.us1.bfl.ai/v1/flux-kontext-max"
+    pro: "https://api.us1.bfl.ai/v1/flux-kontext-pro",
+    max: "https://api.us1.bfl.ai/v1/flux-kontext-max",
 };
 
+// ----------------------- 加载 UI -----------------------
 document.addEventListener("DOMContentLoaded", () => {
     console.log("Panel loaded");
     loadOrCreateSettings();
-    initializeTabSwitching(); // Consolidated DOMContentLoaded listeners
-    initializeEventListeners(); // Initialize event listeners for new tab
+    initializeTabSwitching();
+    initializeEventListeners();
 });
 
+// ========== Tab 切换 ==========
 function initializeTabSwitching() {
     const tabs = document.querySelectorAll(".tab");
     const tabContents = document.querySelectorAll("[data-tab-content]");
 
-    tabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        tabs.forEach(t => t.classList.remove("active"));
-        tabContents.forEach(content => (content.style.display = "none"));
-        tab.classList.add("active");
-        const targetContent = document.querySelector(`[data-tab-content="${tab.dataset.tab}"]`);
-        if (targetContent) {
-            targetContent.style.display = "block";
-        }
-      });
+    tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+            tabs.forEach((t) => t.classList.remove("active"));
+            tabContents.forEach((content) => (content.style.display = "none"));
+            tab.classList.add("active");
+            const targetContent = document.querySelector(
+                `[data-tab-content="${tab.dataset.tab}"]`,
+            );
+            if (targetContent) targetContent.style.display = "block";
+        });
     });
 }
-
+// ========== 全局设置 ==========
 let settings = {
+    // Config tab
     apikey: "",
+    // Fill tab
     prompt: "",
     steps: 30,
     guidance: 20,
     safetyTolerance: 2,
     promptUpsampling: false,
-    // New settings for Kontext Edit Tab
+    // Edit tab
     kontextPrompt: "",
-    kontextSelectedModel: "pro", // Default model key
+    kontextSelectedModel: "pro",
     kontextSeed: null,
     kontextPromptUpsampling: false,
     kontextSafetyTolerance: 2,
@@ -139,114 +143,130 @@ async function invertLayerMask() {
     }
 }
 
+// ========== 读取 / 保存配置 ==========
 async function loadOrCreateSettings() {
     try {
         const tempFolder = await fs.getDataFolder();
         let settingsFile;
         try {
             settingsFile = await tempFolder.getEntry("settings.json");
-            console.log("配置文件已找到，尝试加载...");
-            const content = await settingsFile.read();
-            settings = JSON.parse(content);
-            // Ensure new settings have defaults if loading an old settings file
-            settings.kontextPrompt = settings.kontextPrompt || "";
-            settings.kontextSelectedModel = settings.kontextSelectedModel || "pro"; // Default for model selection
-            settings.kontextSeed = settings.kontextSeed === undefined ? null : settings.kontextSeed; // Preserve null
-            settings.kontextPromptUpsampling = settings.kontextPromptUpsampling || false;
-            settings.kontextSafetyTolerance = settings.kontextSafetyTolerance || 2;
-            settings.kontextAspectRatio = settings.kontextAspectRatio === undefined ? null : settings.kontextAspectRatio; // Preserve null
-
-            console.log("成功加载配置:", settings);
+            settings = Object.assign(settings, JSON.parse(await settingsFile.read()));
         } catch {
-            console.log("配置文件不存在，正在创建...");
             settingsFile = await tempFolder.createFile("settings.json", { overwrite: true });
             await settingsFile.write(JSON.stringify(settings, null, 2));
-            console.log("已创建默认配置文件: settings.json,",settingsFile.nativePath);
         }
 
-        // 填充表单
+        // ---- 填充界面 ----
         document.getElementById("apikey").value = settings.apikey || "";
-        // Fill Tab
         document.getElementById("prompt").value = settings.prompt || "";
-        document.getElementById("steps").value = settings.steps || 30;
-        document.getElementById("guidance").value = settings.guidance || 20;
-        document.getElementById("safetyTolerance").value = settings.safetyTolerance || 2;
-        document.getElementById("promptUpsampling").checked = settings.promptUpsampling || false;
-        // Edit Tab
+        document.getElementById("steps").value = settings.steps;
+        document.getElementById("guidance").value = settings.guidance;
+        document.getElementById("safetyTolerance").value = settings.safetyTolerance;
+        document.getElementById("promptUpsampling").checked = settings.promptUpsampling;
+        // ---- 编辑界面 ----
         document.getElementById("kontextPrompt").value = settings.kontextPrompt || "";
-        document.getElementById("kontextModel").value = settings.kontextSelectedModel || "pro"; // Populate model dropdown
-        if (settings.kontextSeed !== null) document.getElementById("kontextSeed").value = settings.kontextSeed;
-        else document.getElementById("kontextSeed").value = ""; // Clear field if null
-        document.getElementById("kontextPromptUpsampling").checked = settings.kontextPromptUpsampling || false;
-        document.getElementById("kontextSafetyTolerance").value = settings.kontextSafetyTolerance || 2;
-        if (settings.kontextAspectRatio !== null) document.getElementById("kontextAspectRatio").value = settings.kontextAspectRatio;
-        else document.getElementById("kontextAspectRatio").value = ""; // Clear field if null
-
-
-    } catch (error) {
-        console.error("加载或创建配置文件时发生错误:", error);
+        document.getElementById("kontextModel").value = settings.kontextSelectedModel;
+        document.getElementById("kontextSeed").value =
+            settings.kontextSeed !== null ? settings.kontextSeed : "";
+        document.getElementById("kontextPromptUpsampling").checked =
+            settings.kontextPromptUpsampling;
+        document.getElementById("kontextSafetyTolerance").value =
+            settings.kontextSafetyTolerance;
+        document.getElementById("kontextAspectRatio").value =
+            settings.kontextAspectRatio !== null ? settings.kontextAspectRatio : "";
+    } catch (err) {
+        console.error("加载配置失败：", err);
     }
 }
 
 async function saveSettings() {
     try {
-        // 更新当前设置
-        settings.apikey = document.getElementById("apikey").value;
-        // Fill Tab
+        // Config
+        settings.apikey = document.getElementById("apikey").value.trim();
+        // Fill
         settings.prompt = document.getElementById("prompt").value;
-        settings.steps = parseInt(document.getElementById("steps").value, 10);
-        settings.guidance = parseFloat(document.getElementById("guidance").value);
-        settings.safetyTolerance = parseInt(document.getElementById("safetyTolerance").value, 10);
+        settings.steps = +document.getElementById("steps").value;
+        settings.guidance = +document.getElementById("guidance").value;
+        settings.safetyTolerance = +document.getElementById("safetyTolerance").value;
         settings.promptUpsampling = document.getElementById("promptUpsampling").checked;
-        // Edit Tab
+        // Edit
         settings.kontextPrompt = document.getElementById("kontextPrompt").value;
-        settings.kontextSelectedModel = document.getElementById("kontextModel").value; // Save selected model
+        settings.kontextSelectedModel = document.getElementById("kontextModel").value;
         const seedVal = document.getElementById("kontextSeed").value;
-        settings.kontextSeed = seedVal ? parseInt(seedVal, 10) : null;
-        settings.kontextPromptUpsampling = document.getElementById("kontextPromptUpsampling").checked;
-        settings.kontextSafetyTolerance = parseInt(document.getElementById("kontextSafetyTolerance").value, 10);
-        const aspectVal = document.getElementById("kontextAspectRatio").value;
-        settings.kontextAspectRatio = aspectVal.trim() !== "" ? aspectVal.trim() : null;
+        settings.kontextSeed = seedVal ? +seedVal : null;
+        settings.kontextPromptUpsampling =
+            document.getElementById("kontextPromptUpsampling").checked;
+        settings.kontextSafetyTolerance = +document.getElementById(
+            "kontextSafetyTolerance",
+        ).value;
+        const aspectVal = document.getElementById("kontextAspectRatio").value.trim();
+        settings.kontextAspectRatio = aspectVal || null;
 
-
+        // 写文件
         const tempFolder = await fs.getDataFolder();
-        const settingsFile = await tempFolder.createFile("settings.json", { overwrite: true });
-        await settingsFile.write(JSON.stringify(settings, null, 2));
-        console.log("成功保存配置:", settings);
-    } catch (error) {
-        console.error("保存配置时发生错误:", error);
+        const file = await tempFolder.createFile("settings.json", { overwrite: true });
+        await file.write(JSON.stringify(settings, null, 2));
+    } catch (err) {
+        console.error("保存设置失败：", err);
     }
 }
 
-function debounce(func, wait) {
-    let timeout;
-    return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
+// ========== 工具函数 ==========
+function debounce(fn, wait = 500) {
+    let t;
+    return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), wait);
     };
 }
 
-const debouncedSaveSettings = debounce(saveSettings, 500);
+const debouncedSaveSettings = debounce(saveSettings);
 
+// ========== 事件绑定 ==========
 function initializeEventListeners() {
-    // Config Tab
+    // ---- 配置 ----
     document.getElementById("apikey").addEventListener("change", debouncedSaveSettings);
-    // Fill Tab
-    document.getElementById("prompt").addEventListener("change", debouncedSaveSettings);
-    document.getElementById("steps").addEventListener("change", debouncedSaveSettings);
-    document.getElementById("guidance").addEventListener("change", debouncedSaveSettings);
-    document.getElementById("safetyTolerance").addEventListener("change", debouncedSaveSettings);
-    document.getElementById("promptUpsampling").addEventListener("change", debouncedSaveSettings);
+    // ---- 填充 ----
+    ["prompt", "steps", "guidance", "safetyTolerance"].forEach((id) =>
+        document.getElementById(id).addEventListener("change", debouncedSaveSettings),
+    );
+    document
+        .getElementById("promptUpsampling")
+        .addEventListener("change", debouncedSaveSettings);
     document.getElementById("btnGenerate").addEventListener("click", handleGenerateFill);
 
-    // Edit Tab
-    document.getElementById("kontextPrompt").addEventListener("change", debouncedSaveSettings);
-    document.getElementById("kontextModel").addEventListener("change", debouncedSaveSettings); // Listener for model dropdown
-    document.getElementById("kontextSeed").addEventListener("change", debouncedSaveSettings);
-    document.getElementById("kontextPromptUpsampling").addEventListener("change", debouncedSaveSettings);
-    document.getElementById("kontextSafetyTolerance").addEventListener("change", debouncedSaveSettings);
-    document.getElementById("kontextAspectRatio").addEventListener("change", debouncedSaveSettings);
-    document.getElementById("btnGenerateKontext").addEventListener("click", handleGenerateKontext);
+    // ---- 编辑 ----
+    [
+        "kontextPrompt",
+        "kontextModel",
+        "kontextSeed",
+        "kontextPromptUpsampling",
+        "kontextSafetyTolerance",
+        "kontextAspectRatio",
+    ].forEach((id) => document.getElementById(id).addEventListener("change", debouncedSaveSettings));
+    document
+        .getElementById("btnGenerateKontext")
+        .addEventListener("click", handleGenerateKontext);
+
+    // **预设按钮**
+    document
+        .getElementById("btnPresetRestore")
+        .addEventListener("click", (e) =>
+            handlePresetKontext(
+                "Restore and colorize this image. Remove any scratches or imperfections.",
+                e.target,
+            ),
+        );
+    document
+        .getElementById("btnPresetRemoveText")
+        .addEventListener("click", (e) =>
+            handlePresetKontext("remove all the text", e.target),
+        );
+    document
+        .getElementById("btnPresetGhibli")
+        .addEventListener("click", (e) =>
+            handlePresetKontext("convert this picture to Ghibli style", e.target),
+        );
 }
 
 
@@ -693,5 +713,69 @@ async function handleGenerateKontext() {
         logMessage.textContent = `错误 (编辑): ${error.message}`;
     } finally {
         generateButton.disabled = false;
+    }
+}
+
+// ========== 预设按钮公共处理 ==========
+async function handlePresetKontext(presetPrompt, buttonEl) {
+    await saveSettings(); // 先同步界面到配置
+    const logBox = document.getElementById("logKontext");
+    const logMsg = document.getElementById("logMessageKontext");
+    buttonEl.disabled = true;
+    logBox.style.display = "block";
+    logMsg.textContent = `初始化 (预设) - ${buttonEl.textContent}...`;
+
+    try {
+        const {
+            apikey,
+            kontextSelectedModel,
+            kontextSeed,
+            kontextPromptUpsampling,
+            kontextSafetyTolerance,
+            kontextAspectRatio,
+        } = settings;
+
+        if (!apikey) throw new Error("API 密钥未配置。请在“配置”页输入。");
+
+        const apiUrl = KONTEXT_API_ENDPOINTS[kontextSelectedModel];
+        if (!apiUrl) throw new Error(`无效模型: ${kontextSelectedModel}`);
+
+        // 获取图层 Base64（可选）
+        let layerBase64 = null;
+        try {
+            if (app.activeDocument && app.activeDocument.activeLayers.length > 0) {
+                layerBase64 = await getActiveLayerBase64();
+            }
+        } catch (e) {
+            console.warn("获取图层失败，按纯文本生成：", e.message);
+        }
+
+        logMsg.textContent = "已提交生成任务 (预设)...";
+        const { taskId, pollingUrl } = await submitGenericFluxKontextTask(
+            {
+                apikey,
+                prompt: presetPrompt,
+                input_image: layerBase64,
+                seed: kontextSeed,
+                aspect_ratio: kontextAspectRatio,
+                prompt_upsampling: kontextPromptUpsampling,
+                safety_tolerance: kontextSafetyTolerance,
+            },
+            apiUrl,
+        );
+
+        logMsg.textContent = `任务 ID: ${taskId}，等待结果...`;
+        const imgUrl = await getTaskResultFromPollingUrl(apikey, pollingUrl, (t) => {
+            logMsg.textContent = t;
+        });
+
+        logMsg.textContent = "正在加载结果到 Photoshop...";
+        await loadImageToLayerDirectly(imgUrl);
+        logMsg.textContent = "完成！图片已导入新图层。";
+    } catch (err) {
+        console.error("预设任务失败：", err);
+        logMsg.textContent = `错误：${err.message}`;
+    } finally {
+        buttonEl.disabled = false;
     }
 }
